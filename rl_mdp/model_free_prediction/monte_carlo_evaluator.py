@@ -57,4 +57,34 @@ class MCEvaluator(AbstractEvaluator):
 
         :param episode: A list of (state, action, reward) tuples.
         """
-        pass
+
+        # Initalize the return function G with value of 0
+        G = 0
+
+        # Get Gamma from the MDP
+        gamma = self.env.discount_factor
+
+        # Keep track of visited states
+        visited_states = set()
+
+        # Loop backwards through the episode
+        for step in range(len(episode) - 1, -1, -1):
+
+            # Get the state, action and reward at the current step
+            state, action, reward = episode[step]
+
+            # Update the return function G
+            G = (gamma * G) + reward
+
+            # If the state has not been visited before
+            if not (state in visited_states):
+
+                # Add the state to the visited states
+                visited_states.add(state)
+
+                # Append G to Returns()
+                self.returns[state].append(G)
+
+                # Update the value function
+                self.value_fun[state] = np.mean(self.returns[state])
+
